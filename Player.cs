@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Player : Area2D
 {
@@ -8,7 +7,9 @@ public partial class Player : Area2D
 	public Vector2 ScreenSize;
 
 	public override void _Ready()
-	{ ScreenSize = GetViewportRect().Size; }
+	{
+		ScreenSize = GetViewportRect().Size;
+	}
 
 	public override void _Process(double delta)
 	{
@@ -37,5 +38,9 @@ public partial class Player : Area2D
 			x: Mathf.Clamp(Position.X, 0, ScreenSize.X),
 			y: Mathf.Clamp(Position.Y, 0, ScreenSize.X)
 		);
+
+		if (velocity.X < 0) animatedSprite2D.FlipH = true;
+		else animatedSprite2D.FlipH = false;
+
 	}
 }
