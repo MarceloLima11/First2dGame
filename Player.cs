@@ -2,6 +2,8 @@ using Godot;
 
 public partial class Player : Area2D
 {
+	[Signal]
+	public delegate void HitEventHandler();
 	[Export]
 	public int Speed { get; set; } = 400;
 	public Vector2 ScreenSize;
@@ -42,5 +44,19 @@ public partial class Player : Area2D
 		if (velocity.X < 0) animatedSprite2D.FlipH = true;
 		else animatedSprite2D.FlipH = false;
 
+	}
+
+	public void Start(Vector2 position)
+	{
+		Position = position;
+		Show();
+		GetNode<CollisionShape2D>("CollisionShape2D").Disabled = false;
+	}
+
+	public void OnBodyEntered(PhysicsBody2D body)
+	{
+		Hide();
+		EmitSignal(SignalName.Hit);
+		GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
 	}
 }
