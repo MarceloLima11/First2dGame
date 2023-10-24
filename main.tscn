@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqeppjbvn34x0"]
+
+[ext_resource type="PackedScene" uid="uid://d3mtxk01ejimr" path="res://Player.tscn" id="1_r8myl"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_yccr4"]
+script/source = "using Godot;
+
+public partial class Mob : RigidBody2D
+{
+	public override void _Ready()
+	{
+		var animatedSprite2D = GetNode<AnimatedSprite2D>(\"AnimatedSprite2D\");
+		string[] mobTypes = animatedSprite2D.SpriteFrames.GetAnimationNames();
+		animatedSprite2D.Play(mobTypes[GD.Randi() % mobTypes.Length]);
+	}
+
+	public override void _Process(double delta)
+	{ }
+
+	private void OnVisibleOnScreenNotifier2DScreenExited() => QueueFree();
+
+}
+"
+
+[sub_resource type="Curve2D" id="Curve2D_ohqin"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 482, 3, 0, 0, 0, 0, 480, 719, 0, 0, 0, 0, -6, 723, 0, 0, 0, 0, 1, 0)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+script = SubResource("CSharpScript_yccr4")
+
+[node name="Player" parent="." instance=ExtResource("1_r8myl")]
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_ohqin")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+position = Vector2(1, 0)
+rotation = 0.00623693
+
+[connection signal="Hit" from="Player" to="." method="GameOver"]
